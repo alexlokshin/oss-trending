@@ -9,8 +9,8 @@ let dateFormat = require('dateformat');
 
 var PropertiesReader = require('properties-reader');
 var properties = PropertiesReader('./config.properties');
-console.log('Current region:', process.env.AWS_REGION);
-console.log('ES Host:', properties.get('elastic.host'));
+//console.log('Current region:', process.env.AWS_REGION);
+//console.log('ES Host:', properties.get('elastic.host'));
 
 //TODO: Scan trending repos daily for Java, Javascript and Go
 //Keep track of trending repos, and visualize on a timeline
@@ -129,8 +129,8 @@ function report(cacheKey, callback) {
 function capture(callback) {
     trending('daily').then(
         repos => {
-            console.log('Current region:', process.env.AWS_REGION);
-            console.log('ES Host:', properties.get('elastic.host'));
+            //console.log('Current region:', process.env.AWS_REGION);
+            //console.log('ES Host:', properties.get('elastic.host'));
 
             var AWS = require('aws-sdk');
             var myCredentials = new AWS.EnvironmentCredentials('AWS');
@@ -151,6 +151,8 @@ function capture(callback) {
             compressedRepos.map((x) => {
                 bulkItems.push({index: {_index: 'trending', _type: 'daily', _id: id + '-' + x.name}});
                 x['date'] = date;
+                x['timestamp'] = new Date();
+                x['unixtime'] = Math.floor(new Date() / 1000);
                 bulkItems.push(x);
             });
 
