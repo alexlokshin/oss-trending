@@ -29,7 +29,7 @@ provider:
     - Effect: "Allow"
       Action:
         - "es:*"
-      Resource: "arn:aws:es:us-east-1:241407569015:domain/oss-trending/*"
+      Resource: "arn:aws:es:us-east-1:*"
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -62,28 +62,28 @@ provider:
 
 functions:
   monthly:
-    handler: todos/handler.monthly
+    handler: handlers/handler.monthly
     events:
       - http:
           path: monthly
           method: get
           cors: true
   weekly:
-    handler: todos/handler.weekly
+    handler: handlers/handler.weekly
     events:
       - http:
           path: weekly
           method: get
           cors: true
   daily:
-    handler: todos/handler.daily
+    handler: handlers/handler.daily
     events:
       - http:
           path: daily
           method: get
           cors: true
   capture:
-    handler: todos/handler.capture
+    handler: handlers/handler.capture
     events:
       - http:
           path: capture

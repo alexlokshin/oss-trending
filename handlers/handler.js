@@ -1,11 +1,17 @@
 'use strict';
-const trending = require('trending-github');
-const NodeCache = require("node-cache");
-const myCache = new NodeCache();
-const google = require('google')
-const Tokenizer = require('sentence-tokenizer');
-const tokenizer = new Tokenizer('Chuck');
-const dateFormat = require('dateformat');
+let trending = require('trending-github');
+let NodeCache = require("node-cache");
+let myCache = new NodeCache();
+let google = require('google')
+let Tokenizer = require('sentence-tokenizer');
+let tokenizer = new Tokenizer('Chuck');
+let dateFormat = require('dateformat');
+
+var PropertiesReader = require('properties-reader');
+var properties = PropertiesReader('./config.properties');
+console.log('Current region:', process.env.AWS_REGION);
+console.log('ES Host:', properties.get('elastic.host'));
+
 
 // ES: https://search-oss-trending-ob2q763uhwlgfix4lvjvbhm6am.us-east-1.es.amazonaws.com/
 // Client: https://github.com/TheDeveloper/http-aws-es
@@ -127,16 +133,17 @@ function report(cacheKey, callback) {
 function capture(callback) {
     trending('daily').then(
         repos => {
+            console.log('Current region:', process.env.AWS_REGION);
+            console.log('ES Host:', properties.get('elastic.host'));
+
             var AWS = require('aws-sdk');
             var myCredentials = new AWS.EnvironmentCredentials('AWS');
             var client = require('elasticsearch').Client({
-                hosts: 'https://search-oss-trending-ob2q763uhwlgfix4lvjvbhm6am.us-east-1.es.amazonaws.com',
+                hosts: properties.get('elastic.host'),
                 connectionClass: require('http-aws-es'),
                 amazonES: {
-                    region: "us-east-1",
+                    region: process.env.AWS_REGION,
                     credentials: myCredentials
-                    //accessKey: 'AKIAIGQ47WL5JVXHWCRA',
-                    //secretKey: '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'
                 }
             });
 
@@ -193,28 +200,3 @@ module.exports.capture = (event, context, callback) => {
     console.log(err);
     console.log(response);
 });*/
-
-var AWS = require('aws-sdk');
-var myCredentials = new AWS.EnvironmentCredentials('AWS');
-var client = require('elasticsearch').Client({
-    hosts: 'https://search-oss-trending-ob2q763uhwlgfix4lvjvbhm6am.us-east-1.es.amazonaws.com',
-    connectionClass: require('http-aws-es'),
-    amazonES: {
-        region: "us-east-1",
-        accessKey: 'AKIAIGQ47WL5JVXHWCRA',
-        secretKey: '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'
-    }
-});
-
-
-client.deleteByQuery({
-  index: 'trending',
-  body: {
-    query: {
-      match_all: {  }
-    }
-  }
-}, function (err, response) {
-  console.log(err);
-    console.log(response);
-});
