@@ -1,8 +1,4 @@
 node_modules
 .serverless
 .idea
-read.me
 temp
-delete-all.js
-config.js
-config.properties

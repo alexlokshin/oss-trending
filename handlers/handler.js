@@ -12,10 +12,6 @@ var properties = PropertiesReader('./config.properties');
 console.log('Current region:', process.env.AWS_REGION);
 console.log('ES Host:', properties.get('elastic.host'));
 
-
-// ES: https://search-oss-trending-ob2q763uhwlgfix4lvjvbhm6am.us-east-1.es.amazonaws.com/
-// Client: https://github.com/TheDeveloper/http-aws-es
-
 //TODO: Scan trending repos daily for Java, Javascript and Go
 //Keep track of trending repos, and visualize on a timeline
 
@@ -24,7 +20,7 @@ function respondWith(statusCode, err, payload, callback) {
     if (err)
         body.error = err;
     if (payload)
-        body.payload = { version: '1.0.3', text: translate(payload), repos: compress(payload) };
+        body.payload = {version: '1.0.3', text: translate(payload), repos: compress(payload)};
     var response = {
         statusCode: statusCode,
         body: JSON.stringify(body),
@@ -153,19 +149,19 @@ function capture(callback) {
             var bulkItems = [];
 
             compressedRepos.map((x) => {
-                bulkItems.push({ index: { _index: 'trending', _type: 'daily', _id: id + '-' + x.name } });
+                bulkItems.push({index: {_index: 'trending', _type: 'daily', _id: id + '-' + x.name}});
                 x['date'] = date;
                 bulkItems.push(x);
             });
 
-            client.bulk({ body: bulkItems }, function (err, resp) {
+            client.bulk({body: bulkItems}, function (err, resp) {
                 if (err)
                     console.error(err);
                 else
                     console.log('Inserted items.');
             });
 
-            var body = { Status: 'OK' };
+            var body = {Status: 'OK'};
             var response = {
                 statusCode: 200,
                 body: JSON.stringify(body),
@@ -191,12 +187,3 @@ module.exports.capture = (event, context, callback) => {
     capture(callback);
 };
 
-/*capture(function (err, response) {
-    console.log(err);
-    console.log(response);
-});*/
-
-/*report('daily', function (err, response) {
-    console.log(err);
-    console.log(response);
-});*/
