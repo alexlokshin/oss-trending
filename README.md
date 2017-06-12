@@ -4,4 +4,4 @@ AWS Lambda code to periodically pull github trending repos and prepare data for 
 
 ## Configuration
 
-All time series data is stored in ElasticSearch, and I'm using AWS ES for that. To configure the endpoint, change  the `elastic.host` setting in `config.properties` file. For local runs, you might want to configure the config.json with you AWS credentials to execute things like `delete-all.js`. Lambda infers credentials from the execution environment and doesn't have to be explicitly confiugred.
+All time series data is stored in ElasticSearch, and I'm using AWS ES for that. To configure the endpoint, change  the `elastic.host` setting in `config.properties` file. For local runs, you might want to configure the config.json with your AWS credentials to execute things like `delete-all.js`. Lambda infers credentials from the execution environment and doesn't have to be explicitly confiugred.
